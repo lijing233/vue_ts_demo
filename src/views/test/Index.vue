@@ -9,6 +9,8 @@
     <div>子组件v-model: {{ modelData }}</div>
     <div>emit val {{ sonVal }}</div>
     <div><button @click="activeRef">active ref</button></div>
+    <div>mixin: {{ mixinValue }}</div>
+    <div>测试： {{ name }}</div>
     <SonComp
       :syncData.sync="syncData"
       v-model="modelData"
@@ -19,8 +21,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch, Provide } from "vue-property-decorator";
+import {
+  Component,
+  Prop,
+  Vue,
+  Watch,
+  Provide,
+  Ref
+} from "vue-property-decorator";
 import SonComp from "./SonComp.vue";
+import MyMixin from "@/mixin/mixin.ts";
 @Component({
   name: "Test",
   props: {
@@ -33,13 +43,21 @@ import SonComp from "./SonComp.vue";
     SonComp
   }
 })
-export default class extends Vue {
+export default class extends MyMixin {
+  // ref
+  @Ref("sonComp") readonly sonRef!: SonComp;
   // data数据
   private myMsg = "DataMsg";
   syncData = "syncData";
   inpVal = "";
   modelData = "";
   sonVal = "";
+  // 两种写法均可
+  data() {
+    return {
+      name: "lijing"
+    };
+  }
   // computed
   get computedMsg() {
     return "computed:" + this.myMsg;
@@ -61,6 +79,8 @@ export default class extends Vue {
   }
 
   mounted() {
+    // 全局属性 需要定义
+    console.log("globalVal: ", this.$globalVal);
     console.log("=====mounted=====");
   }
 
@@ -72,9 +92,15 @@ export default class extends Vue {
   sonChange(val: any) {
     this.sonVal = val;
   }
-
+  // active ref
   activeRef() {
-    this.$refs.sonComp.refActFun();
+    this.sonRef.refActFun();
+  }
+
+  // Hook
+  beforeRouteEnter(to: any, from: any, next: any) {
+    console.log("beforeRouteEnter");
+    next(); // needs to be called to confirm the navigation
   }
 }
 </script>

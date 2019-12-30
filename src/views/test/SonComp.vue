@@ -29,20 +29,21 @@ import {
   name: "SonComp"
 })
 export default class extends Vue {
+  // propSync
   @PropSync("syncData", { type: String }) syncedName!: string;
-
+  // model
   @Model("onModelChange", { type: String }) readonly modelData!: String;
-
+  // inject
   @Inject("providData") readonly providData!: String;
   @Inject({ from: "providData2", default: "default provid data" })
   readonly pdata!: String;
-
+  // emit
   @Emit("sonChange")
   inpChange(e: any) {
     console.log(e.target.value);
     return e.target.value;
   }
-
+  // method
   refActFun() {
     console.log("REF active");
   }
