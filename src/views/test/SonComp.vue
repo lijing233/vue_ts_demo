@@ -3,18 +3,49 @@
     <div>SonComp</div>
     <div>inject {{ providData }}</div>
     <div>inject {{ pdata }}</div>
+    <div>binding .sync : <input type="text" v-model="syncedName" /></div>
+    <div>
+      binding v-model : {{ modelData }}
+      <button @click="$emit('onModelChange', modelData + '@')">
+        change modelData
+      </button>
+    </div>
+    <div><input type="text" @input="inpChange" /></div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch, Inject } from "vue-property-decorator";
+import {
+  Component,
+  Prop,
+  Vue,
+  Watch,
+  Inject,
+  PropSync,
+  Model,
+  Emit
+} from "vue-property-decorator";
 @Component({
   name: "SonComp"
 })
 export default class extends Vue {
-  @Inject("asd") readonly providData!: String;
+  @PropSync("syncData", { type: String }) syncedName!: string;
+
+  @Model("onModelChange", { type: String }) readonly modelData!: String;
+
+  @Inject("providData") readonly providData!: String;
   @Inject({ from: "providData2", default: "default provid data" })
   readonly pdata!: String;
+
+  @Emit("sonChange")
+  inpChange(e: any) {
+    console.log(e.target.value);
+    return e.target.value;
+  }
+
+  refActFun() {
+    console.log("REF active");
+  }
 }
 </script>
 

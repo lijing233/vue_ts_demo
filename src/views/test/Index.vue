@@ -5,7 +5,16 @@
     <div>props: {{ propMessage }}</div>
     <div><input type="text" v-model="inpVal" /></div>
     <div><button @click="onButtonClick">click</button></div>
-    <SonComp></SonComp>
+    <div>.sync绑定：{{ syncData }}</div>
+    <div>子组件v-model: {{ modelData }}</div>
+    <div>emit val {{ sonVal }}</div>
+    <div><button @click="activeRef">active ref</button></div>
+    <SonComp
+      :syncData.sync="syncData"
+      v-model="modelData"
+      @sonChange="sonChange"
+      ref="sonComp"
+    ></SonComp>
   </div>
 </template>
 
@@ -27,7 +36,10 @@ import SonComp from "./SonComp.vue";
 export default class extends Vue {
   // data数据
   private myMsg = "DataMsg";
+  syncData = "syncData";
   inpVal = "";
+  modelData = "";
+  sonVal = "";
   // computed
   get computedMsg() {
     return "computed:" + this.myMsg;
@@ -55,6 +67,14 @@ export default class extends Vue {
   // methods
   onButtonClick() {
     console.log("click");
+  }
+
+  sonChange(val: any) {
+    this.sonVal = val;
+  }
+
+  activeRef() {
+    this.$refs.sonComp.refActFun();
   }
 }
 </script>
